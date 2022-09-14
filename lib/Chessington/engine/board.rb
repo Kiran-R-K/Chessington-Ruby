@@ -14,7 +14,7 @@ module Chessington
 
       BOARD_SIZE = 8
       def initialize(player, board_state)
-        @current_player = Player::WHITE
+        @current_player = player
         @board = board_state
       end
 

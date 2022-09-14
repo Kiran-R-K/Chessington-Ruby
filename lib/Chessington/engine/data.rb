@@ -17,7 +17,7 @@ module Chessington
     end
 
     Square = Struct.new(:row, :column) do
-      class <<self
+      class << self
         alias_method :at,:new
       end
     end
