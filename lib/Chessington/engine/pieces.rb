@@ -3,10 +3,11 @@ module Chessington
     ##
     # An abstract base class from which all pieces inherit.
     module Piece
-      attr_reader :player
+      attr_reader :player, :moved
 
       def initialize(player)
         @player = player
+        @moved = false
       end
 
       ##
@@ -20,6 +21,7 @@ module Chessington
       def move_to(board, new_square)
         current_square = board.find_piece(self)
         board.move_piece(current_square, new_square)
+        @moved = true
       end
     end
 
@@ -30,12 +32,24 @@ module Chessington
 
       def available_moves(board)
         current_square = board.find_piece(self)
-        if self.player.colour == :black
-          new_row = current_square.row - 1
+        if @moved == true
+          if self.player.colour == :black
+            new_row = current_square.row - 1
+          else
+            new_row = current_square.row + 1
+          end
+          moves = [ Square.at(new_row, current_square.column) ]
         else
-          new_row = current_square.row + 1
+          if self.player.colour == :black
+            new_row = current_square.row - 1
+            second_new_row = current_square.row - 2
+          else
+            new_row = current_square.row + 1
+            second_new_row = current_square.row + 2
+          end
+          moves = [ Square.at(new_row, current_square.column), Square.at(second_new_row, current_square.column) ]
         end
-        moves = [ Square.at(new_row, current_square.column) ]
+
         return moves
       end
     end
