@@ -33,24 +33,30 @@ module Chessington
       def available_moves(board)
         moves = []
         current_square = board.find_piece(self)
-        if !@moved
-          if self.player.colour == :black
-            new_row = current_square.row - 2
-          else
-            new_row = current_square.row + 2
-          end
-          moves << [ Square.at(new_row, current_square.column), ]
-        end
-
         if self.player.colour == :black
           new_row = current_square.row - 1
         else
           new_row = current_square.row + 1
         end
-        moves << [ Square.at(new_row, current_square.column) ]
+        move = Square.at(new_row, current_square.column)
+        if board.get_piece(move) == nil
+          moves << move
+          if !@moved
+            if self.player.colour == :black
+              new_row = current_square.row - 2
+            else
+              new_row = current_square.row + 2
+            end
+            move = Square.at(new_row, current_square.column)
+            if board.get_piece(move) == nil
+              moves << move
+            end
+          end
+        end
 
         return moves
       end
+
     end
 
     ##
