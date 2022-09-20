@@ -52,7 +52,12 @@ module Chessington
       ##
       # Retrieves the piece from the given square of the board.
       def get_piece(square)
-        @board[square.row][square.column]
+        if square.row.between?(0,7) && square.column.between?(0,7)
+          @board[square.row][square.column]
+        else
+          "off board"
+        end
+
       end
 
       ##
