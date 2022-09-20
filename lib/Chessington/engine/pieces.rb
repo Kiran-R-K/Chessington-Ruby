@@ -32,37 +32,35 @@ module Chessington
       include Piece
 
       def available_moves(board)
-        moves = []
-        current_square = board.find_piece(self)
-        if self.player.colour == :black
-          new_row = current_square.row - 1
-        else
-          new_row = current_square.row + 1
-        end
-        move = Square.at(new_row, current_square.column)
-        if board.get_piece(move) == nil
-          moves << move
-          if !@moved
-            if self.player.colour == :black
-              new_row = current_square.row - 2
-            else
-              new_row = current_square.row + 2
-            end
-            move = Square.at(new_row, current_square.column)
-            if board.get_piece(move) == nil
-              moves << move
-            end
+        @moves = []
+        @current_square = board.find_piece(self)
+        @player_colour = self.player.colour
+        new_row = one_row_forward
+        possible_move = Square.at(new_row, @current_square.column)
+        pawn_not_blocked = board.get_piece(possible_move).nil?
+        @moves << possible_move if pawn_not_blocked
 
-          end
-
+        if pawn_not_blocked && !@moved
+          new_row = two_rows_forward
+          possible_move = Square.at(new_row, @current_square.column)
+          pawn_not_blocked = board.get_piece(possible_move).nil?
+          @moves << possible_move if pawn_not_blocked
         end
 
 
-        find_diagonal_squares(current_square)
-        diagonal_moves = find_available_diagonal_moves(board)
-        moves = moves + diagonal_moves
-        return moves
+        find_diagonal_squares(@current_square)
+        find_available_diagonal_moves(board)
 
+        return @moves
+
+      end
+
+      def one_row_forward
+        @player_colour == :black ? @current_square.row - 1 : @current_square.row + 1
+      end
+
+      def two_rows_forward
+        @player_colour == :black ? @current_square.row - 2 : @current_square.row + 2
       end
 
 
@@ -74,16 +72,14 @@ module Chessington
         end
 
       def find_available_diagonal_moves(board)
-        moves = []
         opponent_colour = self.player.opponent
         diagonal_squares = [ @top_right, @top_left, @bottom_right, @bottom_left ]
         diagonal_squares.each do |square|
           piece = board.get_piece(square)
           if piece != nil && piece != "off board" && piece.player.colour == opponent_colour.colour
-            moves << square
+            @moves << square
           end
         end
-        moves
       end
 
 
