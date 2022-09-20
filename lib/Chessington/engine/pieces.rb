@@ -16,6 +16,7 @@ module Chessington
         raise "Not implemented"
       end
 
+
       ##
       # Move this piece to the given square on the board.
       def move_to(board, new_square)
@@ -51,11 +52,42 @@ module Chessington
             if board.get_piece(move) == nil
               moves << move
             end
+
           end
+
         end
 
+
+        find_diagonal_squares(current_square)
+        diagonal_moves = find_available_diagonal_moves(board)
+        moves = moves + diagonal_moves
         return moves
+
       end
+
+
+        def find_diagonal_squares(square)
+          @top_right = Square.at(square.row + 1, square.column - 1)
+          @top_left = Square.at(square.row - 1, square.column - 1)
+          @bottom_right = Square.at(square.row + 1, square.column + 1)
+          @bottom_left = Square.at(square.row - 1, square.column + 1)
+        end
+
+      def find_available_diagonal_moves(board)
+        moves = []
+        opponent_colour = self.player.opponent
+        diagonal_squares = [ @top_right, @top_left, @bottom_right, @bottom_left ]
+        diagonal_squares.each do |square|
+          piece = board.get_piece(square)
+          if piece != nil && piece != "off board" && piece.player.colour == opponent_colour.colour
+            moves << square
+          end
+        end
+        moves
+      end
+
+
+
 
     end
 
