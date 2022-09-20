@@ -31,24 +31,23 @@ module Chessington
       include Piece
 
       def available_moves(board)
+        moves = []
         current_square = board.find_piece(self)
-        if @moved == true
+        if !@moved
           if self.player.colour == :black
-            new_row = current_square.row - 1
+            new_row = current_square.row - 2
           else
-            new_row = current_square.row + 1
+            new_row = current_square.row + 2
           end
-          moves = [ Square.at(new_row, current_square.column) ]
-        else
-          if self.player.colour == :black
-            new_row = current_square.row - 1
-            second_new_row = current_square.row - 2
-          else
-            new_row = current_square.row + 1
-            second_new_row = current_square.row + 2
-          end
-          moves = [ Square.at(new_row, current_square.column), Square.at(second_new_row, current_square.column) ]
+          moves << [ Square.at(new_row, current_square.column), ]
         end
+
+        if self.player.colour == :black
+          new_row = current_square.row - 1
+        else
+          new_row = current_square.row + 1
+        end
+        moves << [ Square.at(new_row, current_square.column) ]
 
         return moves
       end
