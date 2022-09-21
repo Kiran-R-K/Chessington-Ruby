@@ -36,20 +36,18 @@ module Chessington
         @current_square = board.find_piece(self)
         @player_colour = self.player.colour
 
-        #seperate method for these two? can they be dry-er?
+        one_move_forward = Square.at(one_row_forward, @current_square.column)
 
-        new_row = one_row_forward
-        possible_move = Square.at(new_row, @current_square.column)
-        pawn_not_blocked = board.get_piece(possible_move).nil?
-        @moves << possible_move if pawn_not_blocked
+        if can_move(one_move_forward, board)
+          @moves << one_move_forward
+          if !@moved
+            two_moves_forward = Square.at(two_rows_forward, @current_square.column)
+            if can_move(two_moves_forward, board)
+              @moves << two_moves_forward
+            end
+          end
 
-        if pawn_not_blocked && !@moved
-          new_row = two_rows_forward
-          possible_move = Square.at(new_row, @current_square.column)
-          pawn_not_blocked = board.get_piece(possible_move).nil?
-          @moves << possible_move if pawn_not_blocked
         end
-
 
         find_diagonal_squares(@current_square)
         find_available_diagonal_moves(board)
@@ -58,6 +56,11 @@ module Chessington
 
       end
 
+      def can_move(possible_move, board)
+        if board.get_piece(possible_move).nil?
+          possible_move
+        end
+      end
 
       def one_row_forward
         @player_colour == :black ? @current_square.row - 1 : @current_square.row + 1
@@ -116,6 +119,7 @@ module Chessington
       include Piece
 
       def available_moves(board)
+
         []
       end
     end
