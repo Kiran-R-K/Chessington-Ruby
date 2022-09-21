@@ -35,6 +35,9 @@ module Chessington
         @moves = []
         @current_square = board.find_piece(self)
         @player_colour = self.player.colour
+
+        #seperate method for these two? can they be dry-er?
+
         new_row = one_row_forward
         possible_move = Square.at(new_row, @current_square.column)
         pawn_not_blocked = board.get_piece(possible_move).nil?
@@ -55,6 +58,7 @@ module Chessington
 
       end
 
+
       def one_row_forward
         @player_colour == :black ? @current_square.row - 1 : @current_square.row + 1
       end
@@ -65,24 +69,23 @@ module Chessington
 
 
         def find_diagonal_squares(square)
-          @top_right = Square.at(square.row + 1, square.column - 1)
-          @top_left = Square.at(square.row - 1, square.column - 1)
-          @bottom_right = Square.at(square.row + 1, square.column + 1)
-          @bottom_left = Square.at(square.row - 1, square.column + 1)
+          @diagonal_squares = [
+            Square.at(square.row + 1, square.column - 1),
+            Square.at(square.row - 1, square.column - 1),
+            Square.at(square.row + 1, square.column + 1),
+            Square.at(square.row - 1, square.column + 1),
+            ]
         end
 
       def find_available_diagonal_moves(board)
         opponent_colour = self.player.opponent
-        diagonal_squares = [ @top_right, @top_left, @bottom_right, @bottom_left ]
-        diagonal_squares.each do |square|
-          piece = board.get_piece(square)
-          if piece != nil && piece != "off board" && piece.player.colour == opponent_colour.colour
+        @diagonal_squares.each do |square|
+          diagonal_piece = board.get_piece(square)
+          if diagonal_piece != nil && diagonal_piece != false && diagonal_piece.player.colour == opponent_colour.colour
             @moves << square
           end
         end
       end
-
-
 
 
     end

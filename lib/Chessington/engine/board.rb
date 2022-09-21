@@ -52,12 +52,15 @@ module Chessington
       ##
       # Retrieves the piece from the given square of the board.
       def get_piece(square)
-        if square.row.between?(0,7) && square.column.between?(0,7)
+        if is_square_on_board(square)
           @board[square.row][square.column]
         else
-          "off board"
+          false
         end
+      end
 
+      def is_square_on_board(square)
+        square.row.between?(0,7) && square.column.between?(0,7) ? true : false
       end
 
       ##
