@@ -34,16 +34,22 @@ module Chessington
       def available_moves(board)
         @moves = []
         @current_square = board.find_piece(self)
-        @player_colour = self.player.colour
 
-        one_move_forward = Square.at(one_row_forward, @current_square.column)
+        if self.player.colour == :black
+          @one_move_forward = -1
+        else
+          @one_move_forward = 1
+        end
 
-        if can_move(one_move_forward, board)
-          @moves << one_move_forward
+
+        one_move = Square.at(one_row_forward, @current_square.column)
+
+        if can_move(one_move, board)
+          @moves << one_move
           if !@moved
-            two_moves_forward = Square.at(two_rows_forward, @current_square.column)
-            if can_move(two_moves_forward, board)
-              @moves << two_moves_forward
+            two_moves = Square.at(two_rows_forward, @current_square.column)
+            if can_move(two_moves, board)
+              @moves << two_moves
             end
           end
 
@@ -64,20 +70,18 @@ module Chessington
 
 
       def one_row_forward
-        @player_colour == :black ? @current_square.row - 1 : @current_square.row + 1
+        @current_square.row + @one_move_forward
       end
 
       def two_rows_forward
-        @player_colour == :black ? @current_square.row - 2 : @current_square.row + 2
+        @current_square.row + @one_move_forward + @one_move_forward
       end
 
 
         def find_diagonal_squares(square)
           @diagonal_squares = [
-            Square.at(square.row + 1, square.column - 1),
-            Square.at(square.row - 1, square.column - 1),
-            Square.at(square.row + 1, square.column + 1),
-            Square.at(square.row - 1, square.column + 1),
+            Square.at(square.row + @one_move_forward, square.column - 1),
+            Square.at(square.row + @one_move_forward, square.column + 1)
             ]
         end
 
