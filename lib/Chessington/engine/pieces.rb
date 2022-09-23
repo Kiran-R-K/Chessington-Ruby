@@ -50,17 +50,18 @@ module Chessington
         end
 
         find_diagonal_squares(@current_square)
-        find_available_diagonal_moves(board)
+        possible_diagonal_moves = find_available_diagonal_moves(board)
+
+        @moves.concat(possible_diagonal_moves)
 
         return @moves
 
       end
 
       def can_move(possible_move, board)
-        if board.get_piece(possible_move).nil?
-          possible_move
-        end
+        board.get_piece(possible_move).nil?
       end
+
 
       def one_row_forward
         @player_colour == :black ? @current_square.row - 1 : @current_square.row + 1
@@ -81,13 +82,19 @@ module Chessington
         end
 
       def find_available_diagonal_moves(board)
+        possible_diagonal_moves = []
         opponent_colour = self.player.opponent
         @diagonal_squares.each do |square|
           diagonal_piece = board.get_piece(square)
-          if diagonal_piece != nil && diagonal_piece != false && diagonal_piece.player.colour == opponent_colour.colour
-            @moves << square
+          if is_opponents_piece(diagonal_piece, opponent_colour)
+            possible_diagonal_moves << square
           end
         end
+        possible_diagonal_moves
+      end
+
+      def is_opponents_piece(piece, opponent_colour)
+        piece != nil && piece != false && piece.player.colour == opponent_colour.colour
       end
 
 
